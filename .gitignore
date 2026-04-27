@@ -1,0 +1,43 @@
+# --- Jupyter Notebook Specific ---
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+# Prevent checking in notebook output/state (optional but recommended)
+*.ipynb_checkpoints
+
+# --- Python General ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# --- Environments & Dependencies ---
+.venv/
+venv/
+env/
+ENV/
+bin/
+lib/
+include/
+share/
+pyvenv.cfg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Distribution / Packaging ---
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Editor / IDE Specific ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store (Mac specific)
