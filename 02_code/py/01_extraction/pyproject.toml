@@ -1,0 +1,17 @@
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "double"
+
+[project]
+name = "tempo-study-data-extraction"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bioread>=2025.5.2",
+    "pandas>=2.3.3",
+    "tqdm>=4.67.1",
+]
