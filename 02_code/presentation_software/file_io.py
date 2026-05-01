@@ -9,49 +9,53 @@ __version__ = '1.0'
 import os
 import re
 
-audio_dir = 'audio/'
+# Get the absolute path to the project root (where file_io.py lives)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+AUDIO_DIR = os.path.join(BASE_DIR, "audio")
 
 class FileIO:
-
-    def __init__(self, participant_id_int : int):
-        '''Initialise FileIO 
-        '''
-        save_dir = 'saved/'
+    def __init__(self, participant_id_int: int):
+        save_dir = os.path.join(BASE_DIR, "saved")
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
         participant_id = str(participant_id_int).zfill(2)
-        pattern = '^' + participant_id + '[.]csv$'
- 
+        pattern = '^' + participant_id + r'[.]csv$'
+
         for f in os.listdir(save_dir):
             match = re.match(pattern, f)
-            assert not match, ('Participant ' + participant_id 
-                                + ' already recorded!')
+            assert not match, ('Participant ' + participant_id
+                               + ' already recorded!')
 
-        # Maps the experimental conditions (practice, slow, and fast) to their
-        # respective filenames
-        self._cnd_fname = {'Practice': 'PracTrial2.wav',
-                           'Slow': 'BeetKarjan.wav',
-                           'Fast': 'VivAcc.wav'}
+        self._cnd_fname = {
+            'Practice': 'PracTrial2.wav',
+            'Slow': 'BeetKarjan.wav',
+            'Fast': 'VivAcc.wav'
+        }
 
         if participant_id_int % 2 == 0:
-            # Participants with even IDs listen to the slow condition first
-            self.filenames = ['audio/' + self._cnd_fname['Practice'],
-                              'audio/' + self._cnd_fname['Slow'],
-                              'audio/' + self._cnd_fname['Fast']]
+            # even IDs: slow first
+            self.filenames = [
+                os.path.join(AUDIO_DIR, self._cnd_fname['Practice']),
+                os.path.join(AUDIO_DIR, self._cnd_fname['Slow']),
+                os.path.join(AUDIO_DIR, self._cnd_fname['Fast'])
+            ]
         else:
-            # Participants with odd IDs listen to the fast condition first
-            self.filenames = ['audio/' + self._cnd_fname['Practice'],
-                              'audio/' + self._cnd_fname['Fast'],
-                              'audio/' + self._cnd_fname['Slow']]
+            # odd IDs: fast first
+            self.filenames = [
+                os.path.join(AUDIO_DIR, self._cnd_fname['Practice']),
+                os.path.join(AUDIO_DIR, self._cnd_fname['Fast']),
+                os.path.join(AUDIO_DIR, self._cnd_fname['Slow'])
+            ]
 
+        self._temp_fname = os.path.join(save_dir, participant_id + ".temp")
+        self._final_fname = os.path.join(save_dir, participant_id + ".csv")
 
-        self._temp_fname = save_dir + participant_id + '.temp'
-        self._final_fname = save_dir + participant_id + '.csv'
 
     def write(self, arousal_rating : float):
+        print("this is arousal rating ", arousal_rating, self.filenames)
         with open(self._temp_fname, 'a') as f:
-            f.write('{0},{1:f}\n'.format(self.filenames.pop(0).split('/')[1],
+            f.write('{0},{1:f}\n'.format(os.path.basename(self.filenames.pop(0)),
                                          arousal_rating))
     
     def save_final(self):

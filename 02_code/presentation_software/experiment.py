@@ -30,13 +30,14 @@ class Experiment():
         # Collect participant ID
         dlg = Dlg(title='Movie presentation experiment')
         dlg.addField('Participant ID:')
-        participant_id_int = int(dlg.show()[0].lstrip('0'))
+        participant_id_int = int(dlg.show()[0].lstrip('0')) # type: ignore
         participant_id = str(participant_id_int).zfill(2)
         print('participant_id', participant_id)
         if not dlg.OK: core.quit()
        
-        self.win = Window(fullscr=True,
+        self.win = Window(fullscr=True, 
                            color='white')
+        event.globalKeys.add(key='escape', func=core.quit)
 
         self.mouse = event.Mouse(win=self.win)
 
@@ -65,6 +66,11 @@ class Experiment():
                                color='grey')
         self._timer.size = 0.2
 
+    def _check_quit(self):
+        if "escape" in event.getKeys():
+            self.win.close()
+            core.quit()
+
     def run_training(self):
         info_files = [
             'img/intro-1.png',
@@ -78,6 +84,7 @@ class Experiment():
                                      size=(2560, 1440))
 
         while not self.mouse.getPressed()[0]:
+                    self._check_quit()
                     self._background.draw()
                     self._participant_id_text.draw()
                     self.win.flip()
@@ -86,12 +93,14 @@ class Experiment():
         min_time = core.getTime() + 1.0 
 
         self._background.image = info_files.pop(0)
+        self._background.size = self.win.size
         while True:
             self._background.draw()
             self.win.flip()
             if self.mouse.getPressed()[0] and core.getTime() > min_time: 
                 if not info_files: break
                 self._background.image = info_files.pop(0) 
+                self._background.size = self.win.size
                 min_time = core.getTime() + 1.0
 
         self.run_current_trial() # play training clip
@@ -176,6 +185,7 @@ class Experiment():
 
         self._background.image = 'img/end.png'
         while not self.mouse.getPressed()[0]:
+            self._check_quit()
             self._background.draw()
             self.win.flip()
 

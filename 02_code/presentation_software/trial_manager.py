@@ -46,6 +46,7 @@ class TrialManager():
         '''Loads all the audio clips as psychopy sound objects.
         '''
         self._clip_objs = []
+        print("this is the clip list: ", clip_list)
         loading_text = visual.TextStim(self.win, 
                                        text='',
                                        pos=(0,0), 
@@ -72,7 +73,7 @@ class TrialManager():
         stime = core.getTime()
         event_marker.begin_trial() # event to acqknowledge
         audio.play()
-        while audio.status != constants.FINISHED:
+        while not audio.isFinished:
             if self.shortcut.skip_enabled: # skip if n is pressed three times
                 audio.pause()
                 self.shortcut.skip_enabled = False
@@ -80,7 +81,8 @@ class TrialManager():
             self._background.draw()
             self.win.flip()
 
-        event_marker.end_trial()    # event to acqknowledge
+
+        event_marker.end_trial()    # event to acknowledge
 
         self._valence_slider.reset()
         self._background.image = 'img/arousal-slider.png'
